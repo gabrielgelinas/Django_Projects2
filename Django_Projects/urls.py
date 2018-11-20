@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from SICAD import views as sicad_views
+from SICAD.views import views as sicad_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),

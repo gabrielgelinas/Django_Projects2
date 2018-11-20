@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .forms import UserRegisterForm
+from SICAD.forms.forms import UserRegisterForm
 posts = [
     {
         'title': 'Premier Autheur'
