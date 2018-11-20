@@ -1,7 +1,24 @@
+from django.contrib.auth.forms import UserCreationForm
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
-from django.forms import ModelForm, forms
+from django.forms import ModelForm, EmailField
+
+
+class UserRegisterForm(UserCreationForm):
+    email = EmailField()
+    # adresse = models.TextField(max_length=500, blank=True)
+    # tel = models.TextField(max_length=500, blank=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+
+class UserPersonneForm(ModelForm):
+    class Meta:
+        model = User
+        fields = '__all__'
 
 
 # region Personne

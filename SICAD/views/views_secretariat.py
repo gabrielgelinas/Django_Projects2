@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from SICAD.models import ClasseForm, ProgrammeForm, SujetForm
+from SICAD.models import ClasseForm, ProgrammeForm, SujetForm, UserPersonneForm
 from django.contrib import messages
 
 
@@ -10,14 +10,14 @@ def home(request):
 
 def create_user_form(request):
     if request.method == 'POST':
-        user_form = UserCreationForm(request.POST)
+        user_form = UserPersonneForm(request.POST)
         if user_form.is_valid():
             user_form.save()
             username = user_form.cleaned_data.get('username')
             messages.success(request, f'Programme {username} created!')
             return redirect('sicad-secretariat')
     else:
-        user_form = ProgrammeForm()
+        user_form = UserPersonneForm()
     return render(request, 'sicad/secretariat.html', {'form': user_form, 'type': 'create_user_form'})
 
 
