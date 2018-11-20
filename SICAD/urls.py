@@ -1,6 +1,5 @@
 from django.urls import path
-from SICAD.views import views
+from SICAD.views import views, views_secretariat
 
 urlpatterns = [
-    path('', views.home, name='sicad-accueil'),
 ]

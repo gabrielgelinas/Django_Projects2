@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from SICAD.forms.forms import UserRegisterForm
+from SICAD.forms import UserRegisterForm
+
 posts = [
     {
         'title': 'Premier Autheur'
@@ -29,3 +30,4 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, 'sicad/register.html', {'form': form})
+
