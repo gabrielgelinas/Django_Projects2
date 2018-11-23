@@ -1,4 +1,7 @@
-from django.contrib.auth.forms import UserCreationForm
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, UsernameField
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -7,6 +10,8 @@ from django.forms import ModelForm, EmailField
 
 class UserRegisterForm(UserCreationForm):
     email = EmailField()
+    email.label = 'Adresse Courriel'
+
     # adresse = models.TextField(max_length=500, blank=True)
     # tel = models.TextField(max_length=500, blank=True)
 
@@ -15,10 +20,27 @@ class UserRegisterForm(UserCreationForm):
         fields = ['username', 'email', 'password1', 'password2']
 
 
-class UserPersonneForm(ModelForm):
+class UserPersonneForm(UserCreationForm):
+    email = EmailField()
+    email.label = 'Adresse Courriel'
+
+    username = UsernameField()
+    username.label = 'Utilisateur'
+
+    TypesPersonne = ((1, 'Enseignant'), (2, 'Etudiant'))
+    typePersonne = forms.ChoiceField(label='Type de compte', choices=TypesPersonne)
+
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['username', 'typePersonne', 'email', 'password1', 'password2']
+
+    def save(self, commit=True):
+        # do something with self.cleaned_data['typePersonne']
+        username = self.cleaned_data['username']
+
+        if User.objects.exclude(pk=self.instance.pk).filter(username=username).exists():
+            raise forms.ValidationError(u'Username "%s" is already in use.' % username)
+        return super(UserPersonneForm, self).save(commit=commit)
 
 
 # region Personne
@@ -26,8 +48,9 @@ class UserPersonneForm(ModelForm):
 
 class Personne(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    adresse = models.TextField(max_length=500, blank=True)
-    tel = models.TextField(max_length=500, blank=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
         return self.user.username
@@ -36,16 +59,43 @@ class Personne(models.Model):
 # region OneToOneFunc
 
 
-def create_personne(sender, **kwargs):
-    if kwargs['created']:
-        personne = Personne.objects.create(user=kwargs['instance'])
-
-
-post_save.connect(create_personne, sender=User)
+# def create_personne(sender, **kwargs):
+#     if kwargs['created']:
+#         personne = Personne.objects.create(user=kwargs['instance'])
+#
+#
+# post_save.connect(create_personne, sender=User)
 
 
 # endregion
 # endregion
+
+
+class Animal(models.Model):
+    animal = models.TextField(max_length=10, blank=True)
+
+
+class AnimalForm(ModelForm):
+    class Meta:
+        model = Animal
+        fields = '__all__'
+
+
+class Cat(models.Model):
+    # animal = models.OneToOneField(Animal, on_delete=models.CASCADE)
+    cat = models.TextField(max_length=500, blank=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+
+class Dog(models.Model):
+    # animal = models.OneToOneField(Animal, on_delete=models.CASCADE)
+    dog = models.TextField(max_length=500, blank=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
 
 # region Etudiant
 
@@ -137,7 +187,7 @@ class ProgrammeForm(ModelForm):
 
 
 class Sujet(models.Model):
-    programme = models.ForeignKey(Programme, on_delete=models.DO_NOTHING, null=True)
+    programme = models.OneToOneField(Programme, on_delete=models.DO_NOTHING, null=True)
     codeSujet = models.TextField(max_length=20, blank=True)
     description = models.TextField(max_length=100, blank=True)
     nbCredit = models.DecimalField(max_digits=3, decimal_places=2, blank=True)
