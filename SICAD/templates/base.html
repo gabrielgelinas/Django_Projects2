@@ -30,52 +30,82 @@
 <body>
 <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{% url 'sicad-accueil' %}">SICAD</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'sicad-accueil' %}">SICAD</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'sicad-accueil' %}">Accueil <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'create-program' %}">Create Program</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'create-sujet' %}">Create Sujet</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'create-class' %}">Create Class</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'create-user-form' %}">Create User Form</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'create-class' %}">Create Class</a>
-                </li>
-                {#                <li class="nav-item dropdown">#}
-                {#                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"#}
-                {#                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
-                {#                        Dropdown#}
-                {#                    </a>#}
-                {#                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">#}
-                {#                        <a class="dropdown-item" href="#">Action</a>#}
-                {#                        <a class="dropdown-item" href="#">Another action</a>#}
-                {#                        <div class="dropdown-divider"></div>#}
-                {#                        <a class="dropdown-item" href="#">Something else here</a>#}
-                {#                    </div>#}
-                {#                </li>#}
-                {#                <li class="nav-item">#}
-                {#                    <a class="nav-link disabled" href="#">Disabled</a>#}
-                {#                </li>#}
-            </ul>
-            {#            <form class="form-inline my-2 my-lg-0">#}
-            {#                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">#}
-            {#                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>#}
-            {#            </form>#}
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    {#                    <li class="nav-item">#}
+                    {#                        <a class="nav-link" href="{% url 'sicad-accueil' %}">#}
+                    {#                            Accueil#}
+                    {#                            <span class="sr-only">(current)</span>#}
+                    {#                        </a>#}
+                    {#                    </li>#}
+                    {% if request.session.acces == 'admin' or request.session.acces == 'secretariat' %}
+                        <li class="nav-item dropdown">
+
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Secretariat
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'create-sujet' %}">Create Sujet</a>
+                                <a class="dropdown-item" href="{% url 'create-class' %}">Create Class</a>
+                                <a class="dropdown-item" href="{% url 'create-etudiant-form' %}">Create Student</a>
+                                <a class="dropdown-item" href="{% url 'etudiant-class-form' %}">Add Student to Class</a>
+                            </div>
+                        </li>
+                    {% endif %}
+                    {% if request.session.acces == 'admin' %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Ressources Humaines
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'create-program' %}">Create Program</a>
+                                <a class="dropdown-item" href="{% url 'create-enseignant-form' %}">Create Enseignant</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#">Disabled</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                {#                        <form class="form-inline my-2 my-lg-0">#}
+                {#                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">#}
+                {#                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>#}
+                {#                        </form>#}
+                <ul class="navbar-nav small">
+                    <li class="navbar-nav mr-auto">
+                        <span class="nav-link">User :</span>
+                    </li>
+                    <li class="navbar-nav mr-auto">
+                    <span class="nav-link text-light">
+                        {{ request.user.username }}
+{#                        {% if request.session.acces == 'enseignant' %}#}
+{#                            {{ request.session.acces }}#}
+{#                        {% endif %}#}
+                    </span>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="navbar-nav mr-auto">
+                        <span class="nav-link">&nbsp;</span>
+                    </li>
+                    <li class="navbar-nav mr-auto">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="navbar-nav mr-auto">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 </header>
@@ -88,6 +118,9 @@
             </div>
         {% endfor %}
     {% endif %}
+    <div class="container">
+
+    </div>
     {% block content %}
     {% endblock %}
 </div>
