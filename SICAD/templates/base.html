@@ -61,7 +61,7 @@
                             </div>
                         </li>
                     {% endif %}
-                    {% if request.session.acces == 'admin' %}
+                    {% if request.session.acces == 'admin' or request.session.acces == 'secretariat' %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

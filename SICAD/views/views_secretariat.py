@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from SICAD.models import ClasseForm, ProgrammeForm, SujetForm, UserPersonneForm, Etudiant, Enseignant, EtudiantForm, \
-    EnseignantForm, EtudiantClassForm
+    EnseignantForm, EtudiantClassForm, Classe
 from django.contrib import messages
 from django.contrib.auth.models import User
 
@@ -112,10 +112,12 @@ def etudiant_class_form(request):
     if request.method == 'POST':
         etudiant_class_form = EtudiantClassForm(request.POST)
         if etudiant_class_form.is_valid():
-            etudiant_class_form.save()
+            classe = Classe.objects.get(codeClasse=etudiant_class_form.cleaned_data.get('codeClasse'))
+            classe.etudiants.set(etudiant_class_form.cleaned_data.get('etudiants'))
+            classe.save()
             # sujet = etudiant_class_form.cleaned_data.get('Sujet')
             # code_classe = etudiant_class_form.cleaned_data.get('codeClasse')
-            messages.success(request, f'Etudiant inscrit à la classe : !')
+            messages.success(request, f'Etudiants inscrit à la classe !')
             return redirect('sicad-secretariat')
     else:
         etudiant_class_form = EtudiantClassForm()

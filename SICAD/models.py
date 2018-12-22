@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UsernameField
 from django.contrib.contenttypes.models import ContentType
@@ -265,6 +267,7 @@ class Classe(models.Model):
     jourSemaine = models.TextField(max_length=10, choices=JOUR_SEMAINE)
     heureDebut = models.TimeField()
     heureFin = models.TimeField()
+    etudiants = models.ManyToManyField(to=Etudiant)
 
     def __str__(self):
         if self.codeClasse == '':
@@ -277,15 +280,25 @@ class ClasseForm(ModelForm):
     class Meta:
         model = Classe
         fields = '__all__'
+
+
 # endregion
 
 
-class EtudiantClassForm(forms.Form):
+class EtudiantClassForm(ModelForm):
+    list_class_obj = Classe.objects.all()
+    list_class = []
+    i = 0
+    for class_obj in list_class_obj:
+        list_class.append(
+            (str(class_obj.codeClasse.to_integral_value()), str(class_obj.codeClasse.to_integral_value())))
+        i += 1
 
-    # here we use a dummy `queryset`, because ModelChoiceField
-    # requires some queryset
-    class_field = forms.ModelChoiceField(queryset=Classe.objects.all())
-    #
-    # def __init__(self, classe_id):
-    #     super(ClasseForm, self).__init__()
-    #     self.fields['class_field'].queryset = Classe.objects.filter(id=classe_id)
+    pprint('list class : ')
+    pprint(list_class)
+    pprint('test')
+    codeClasse = forms.ChoiceField(choices=list_class)
+
+    class Meta:
+        model = Classe
+        fields = ['codeClasse', 'etudiants']
